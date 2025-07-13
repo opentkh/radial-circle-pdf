@@ -14,27 +14,31 @@ function App() {
   }
 
   const handleReset = () => {
-    setCircleData(null)
     setShowPreview(false)
   }
 
   return (
     <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>Radial Circle PDF Generator</h1>
-      </div>
+      <header className="app-header">
+        <h1 className="app-title">Radial Circle PDF Generator</h1>
+        <p className="app-subtitle">指定した直径の円と角度毎の放射線を描画し、PDF出力するWebアプリケーション</p>
+      </header>
       
-      {!showPreview ? (
-        <InputForm onGenerate={handleGenerate} />
-      ) : (
-        <div>
-          <CanvasPreview circleData={circleData!} />
+      <div className="main-card">
+        {!showPreview ? (
+          <InputForm onGenerate={handleGenerate} initialData={circleData || undefined} />
+        ) : (
           <div>
-            <PDFGenerator circleData={circleData!} />
-            <button onClick={handleReset}>再作成</button>
+            <div className="canvas-container">
+              <CanvasPreview circleData={circleData!} />
+            </div>
+            <div className="button-group">
+              <PDFGenerator circleData={circleData!} />
+              <button className="secondary-button" onClick={handleReset}>再作成</button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

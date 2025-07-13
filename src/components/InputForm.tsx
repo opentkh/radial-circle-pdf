@@ -4,16 +4,23 @@ import { validateAngle } from '../utils/validation'
 
 interface InputFormProps {
   onGenerate: (data: CircleData) => void
+  initialData?: CircleData
 }
 
 const validDivisions = [2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 18, 20, 24, 30, 36, 40, 45]
 
-const InputForm: React.FC<InputFormProps> = ({ onGenerate }) => {
-  const [diameter, setDiameter] = useState<string>('50')
-  const [angleInputMode, setAngleInputMode] = useState<'manual' | 'division'>('manual')
-  const [angle, setAngle] = useState<string>('30')
-  const [division, setDivision] = useState<string>('12')
-  const [extensionLength, setExtensionLength] = useState<string>('10')
+const InputForm: React.FC<InputFormProps> = ({ onGenerate, initialData }) => {
+  const [diameter, setDiameter] = useState<string>(initialData?.diameter?.toString() || '50')
+  const [angleInputMode, setAngleInputMode] = useState<'manual' | 'division'>(initialData?.angleInputMode || 'manual')
+  const [angle, setAngle] = useState<string>(initialData?.angle?.toString() || '30')
+  const [division, setDivision] = useState<string>(() => {
+    if (initialData?.angle) {
+      const divisionValue = 360 / initialData.angle
+      return validDivisions.includes(divisionValue) ? divisionValue.toString() : '12'
+    }
+    return '12'
+  })
+  const [extensionLength, setExtensionLength] = useState<string>(initialData?.extensionLength?.toString() || '10')
   const [errors, setErrors] = useState<{diameter?: string, angle?: string, extensionLength?: string}>({})
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,15 +56,21 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate }) => {
     setErrors(newErrors)
     
     if (Object.keys(newErrors).length === 0) {
-      onGenerate({ diameter: diameterNum, angle: angleNum, extensionLength: extensionLengthNum })
+      onGenerate({ 
+        diameter: diameterNum, 
+        angle: angleNum, 
+        extensionLength: extensionLengthNum,
+        angleInputMode 
+      })
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="diameter">円の直径 (mm)</label>
+        <label className="form-label" htmlFor="diameter">円の直径 (mm)</label>
         <input
+          className="form-input"
           type="number"
           id="diameter"
           value={diameter}
@@ -69,111 +82,55 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate }) => {
       </div>
       
       <div className="form-group">
-        <label>角度入力方式</label>
-        <div style={{ 
-          marginBottom: '15px', 
-          display: 'flex', 
-          gap: '20px',
-          padding: '10px',
-          backgroundColor: '#f5f5f5',
-          borderRadius: '8px',
-          border: '1px solid #ddd'
-        }}>
-          <label style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px',
-            cursor: 'pointer',
-            fontWeight: angleInputMode === 'manual' ? 'bold' : 'normal'
-          }}>
+        <label className="form-label">角度入力方式</label>
+        <div className="radio-group">
+          <label className={`radio-option ${angleInputMode === 'manual' ? 'active' : ''}`}>
             <input
+              className="radio-input"
               type="radio"
               value="manual"
               checked={angleInputMode === 'manual'}
               onChange={(e) => setAngleInputMode(e.target.value as 'manual' | 'division')}
-              style={{ transform: 'scale(1.2)' }}
             />
-            <span>手動入力（角度指定）</span>
+            <span className="radio-label">手動入力（角度指定）</span>
           </label>
-          <label style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px',
-            cursor: 'pointer',
-            fontWeight: angleInputMode === 'division' ? 'bold' : 'normal'
-          }}>
+          <label className={`radio-option ${angleInputMode === 'division' ? 'active' : ''}`}>
             <input
+              className="radio-input"
               type="radio"
               value="division"
               checked={angleInputMode === 'division'}
               onChange={(e) => setAngleInputMode(e.target.value as 'manual' | 'division')}
-              style={{ transform: 'scale(1.2)' }}
             />
-            <span>等分指定（n等分）</span>
+            <span className="radio-label">等分指定（n等分）</span>
           </label>
         </div>
         
         {angleInputMode === 'manual' ? (
-          <div style={{ 
-            padding: '15px', 
-            backgroundColor: '#fff', 
-            border: '2px solid #007bff', 
-            borderRadius: '8px' 
-          }}>
-            <label htmlFor="angle" style={{ 
-              fontWeight: 'bold', 
-              color: '#007bff',
-              marginBottom: '8px',
-              display: 'block'
-            }}>角度を直接入力 (度)</label>
+          <div className="input-section manual">
+            <label className="section-label manual" htmlFor="angle">角度を直接入力 (度)</label>
             <input
+              className="form-input"
               type="number"
               id="angle"
               value={angle}
               onChange={(e) => setAngle(e.target.value)}
               placeholder="例: 30"
               step="1"
-              style={{ 
-                width: '100%', 
-                padding: '8px', 
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px'
-              }}
             />
             {errors.angle && <div className="error">{errors.angle}</div>}
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#666', 
-              marginTop: '5px' 
-            }}>
+            <div className="section-note">
               ※ 360の約数のみ有効（例：30, 45, 60, 90度など）
             </div>
           </div>
         ) : (
-          <div style={{ 
-            padding: '15px', 
-            backgroundColor: '#fff', 
-            border: '2px solid #28a745', 
-            borderRadius: '8px' 
-          }}>
-            <label htmlFor="division" style={{ 
-              fontWeight: 'bold', 
-              color: '#28a745',
-              marginBottom: '8px',
-              display: 'block'
-            }}>360度を何等分するか選択</label>
+          <div className="input-section division">
+            <label className="section-label division" htmlFor="division">360度を何等分するか選択</label>
             <select
+              className="form-select"
               id="division"
               value={division}
               onChange={(e) => setDivision(e.target.value)}
-              style={{ 
-                width: '100%', 
-                padding: '8px', 
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px'
-              }}
             >
               {validDivisions.map(n => (
                 <option key={n} value={n.toString()}>
@@ -181,11 +138,7 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate }) => {
                 </option>
               ))}
             </select>
-            <div style={{ 
-              fontSize: '12px', 
-              color: '#666', 
-              marginTop: '5px' 
-            }}>
+            <div className="section-note">
               ※ 精度の高い角度が自動計算されます
             </div>
           </div>
@@ -193,8 +146,9 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate }) => {
       </div>
       
       <div className="form-group">
-        <label htmlFor="extensionLength">延長ライン長さ (mm)</label>
+        <label className="form-label" htmlFor="extensionLength">延長ライン長さ (mm)</label>
         <input
+          className="form-input"
           type="number"
           id="extensionLength"
           value={extensionLength}
@@ -207,7 +161,9 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate }) => {
         {errors.extensionLength && <div className="error">{errors.extensionLength}</div>}
       </div>
       
-      <button type="submit">生成</button>
+      <div className="button-group">
+        <button className="primary-button" type="submit">生成</button>
+      </div>
     </form>
   )
 }

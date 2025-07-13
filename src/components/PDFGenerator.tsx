@@ -28,8 +28,8 @@ const PDFGenerator: React.FC<PDFGeneratorProps> = ({ circleData }) => {
   }
 
   return (
-    <button onClick={handleSavePDF}>
-      保存
+    <button className="primary-button" onClick={handleSavePDF}>
+      PDF保存
     </button>
   )
 }
