@@ -9,7 +9,8 @@ export const generatePDF = async (circleData: CircleData): Promise<Uint8Array> =
   const centerX = width / 2
   const centerY = height / 2
   
-  const radius = (circleData.diameter * 28.35) / 2 // cm to points (1cm = 28.35 points)
+  const radius = (circleData.diameter * 2.83) / 2 // mm to points (1mm = 2.83 points)
+  const extensionLength = circleData.extensionLength * 2.83 // mm to points
   
   const angleRad = (circleData.angle * Math.PI) / 180
   const numLines = 360 / circleData.angle
@@ -24,12 +25,12 @@ export const generatePDF = async (circleData: CircleData): Promise<Uint8Array> =
   
   for (let i = 0; i < numLines; i++) {
     const currentAngle = i * angleRad
-    const endX = centerX + radius * Math.cos(currentAngle)
-    const endY = centerY + radius * Math.sin(currentAngle)
+    const extendedEndX = centerX + (radius + extensionLength) * Math.cos(currentAngle)
+    const extendedEndY = centerY + (radius + extensionLength) * Math.sin(currentAngle)
     
     page.drawLine({
       start: { x: centerX, y: centerY },
-      end: { x: endX, y: endY },
+      end: { x: extendedEndX, y: extendedEndY },
       thickness: 1,
       color: rgb(0, 0, 0),
     })

@@ -19,7 +19,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ circleData }) => {
     
     const centerX = canvas.width / 2
     const centerY = canvas.height / 2
-    const radius = (circleData.diameter * 10) / 2 // cm to pixels (10px = 1cm)
+    const radius = circleData.diameter / 2 // mm to pixels (1px = 1mm)
+    const extensionLength = circleData.extensionLength // mm
 
     ctx.strokeStyle = '#000'
     ctx.lineWidth = 2
@@ -33,12 +34,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ circleData }) => {
 
     for (let i = 0; i < numLines; i++) {
       const currentAngle = i * angleRad
-      const endX = centerX + radius * Math.cos(currentAngle)
-      const endY = centerY + radius * Math.sin(currentAngle)
+      const extendedEndX = centerX + (radius + extensionLength) * Math.cos(currentAngle)
+      const extendedEndY = centerY + (radius + extensionLength) * Math.sin(currentAngle)
 
       ctx.beginPath()
       ctx.moveTo(centerX, centerY)
-      ctx.lineTo(endX, endY)
+      ctx.lineTo(extendedEndX, extendedEndY)
       ctx.stroke()
     }
   }, [circleData])
