@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CircleData } from '../types'
 import { validateAngle } from '../utils/validation'
+import { exceedsPrintArea, printAreaWarning } from '../utils/dimensions'
 
 interface InputFormProps {
   onGenerate: (data: CircleData) => void
@@ -23,6 +24,11 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate, initialData }) => {
   const [extensionLength, setExtensionLength] = useState<string>(initialData?.extensionLength?.toString() || '10')
   const [errors, setErrors] = useState<{diameter?: string, angle?: string, extensionLength?: string}>({})
 
+  const currentDiameter = parseFloat(diameter)
+  const currentExtension = parseInt(extensionLength)
+  const showPrintAreaWarning =
+    currentDiameter > 0 && currentExtension >= 0 && exceedsPrintArea(currentDiameter, currentExtension)
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -42,7 +48,6 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate, initialData }) => {
     } else {
       const divisionNum = parseInt(division)
       angleNum = 360 / divisionNum
-      console.log('Division mode:', divisionNum, 'Angle:', angleNum)
     }
     
     if (!diameter || diameterNum <= 0) {
@@ -160,6 +165,10 @@ const InputForm: React.FC<InputFormProps> = ({ onGenerate, initialData }) => {
         />
         {errors.extensionLength && <div className="error">{errors.extensionLength}</div>}
       </div>
+
+      {showPrintAreaWarning && (
+        <div className="warning">{printAreaWarning(currentDiameter, currentExtension)}</div>
+      )}
       
       <div className="button-group">
         <button className="primary-button" type="submit">生成</button>

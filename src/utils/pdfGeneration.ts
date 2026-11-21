@@ -1,5 +1,6 @@
 import { PDFDocument, rgb } from 'pdf-lib'
 import { CircleData } from '../types'
+import { MM_TO_PT } from './dimensions'
 
 export const generatePDF = async (circleData: CircleData): Promise<Uint8Array> => {
   const pdfDoc = await PDFDocument.create()
@@ -9,8 +10,8 @@ export const generatePDF = async (circleData: CircleData): Promise<Uint8Array> =
   const centerX = width / 2
   const centerY = height / 2
   
-  const radius = (circleData.diameter * 2.83) / 2 // mm to points (1mm = 2.83 points)
-  const extensionLength = circleData.extensionLength * 2.83 // mm to points
+  const radius = (circleData.diameter * MM_TO_PT) / 2
+  const extensionLength = circleData.extensionLength * MM_TO_PT
   
   const angleRad = (circleData.angle * Math.PI) / 180
   const numLines = 360 / circleData.angle

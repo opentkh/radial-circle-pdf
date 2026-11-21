@@ -245,10 +245,30 @@ body {
 }
 
 canvas {
+  max-width: 100%;
+  height: auto;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   background: white;
+}
+
+.warning {
+  color: #975a16;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: rgba(236, 201, 75, 0.15);
+  border-radius: 8px;
+  border-left: 4px solid #d69e2e;
+}
+
+.preview-note {
+  text-align: center;
+  color: #718096;
+  font-size: 0.85rem;
 }
 
 @media (max-width: 768px) {

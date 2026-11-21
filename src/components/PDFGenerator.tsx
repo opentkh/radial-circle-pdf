@@ -15,7 +15,7 @@ const PDFGenerator: React.FC<PDFGeneratorProps> = ({ circleData }) => {
       
       const a = document.createElement('a')
       a.href = url
-      a.download = `radial-circle-${circleData.diameter}cm-${circleData.angle}deg.pdf`
+      a.download = `radial-circle-${circleData.diameter}mm-${circleData.angle}deg.pdf`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
