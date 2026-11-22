@@ -25,11 +25,27 @@
 
 ## 🛠 技術スタック
 
-- **Frontend**: React + TypeScript
-- **Build Tool**: Vite
-- **Drawing**: Canvas API
-- **PDF**: PDF-lib
-- **Deployment**: Cloudflare Pages（GitHub連携、mainへのpushで自動デプロイ）
+| 分類 | 技術 | バージョン | 用途・補足 |
+|---|---|---|---|
+| UI | [React](https://react.dev/) | 18.3 | 画面の構築。状態管理は `useState` のみで、外部ライブラリは使っていません |
+| 言語 | [TypeScript](https://www.typescriptlang.org/) | 5.8 | `strict` モードで型チェック |
+| ビルド | [Vite](https://vite.dev/) + `@vitejs/plugin-react` | 6.4 / 4.7 | 開発サーバーと本番ビルド。`base: './'` で相対パス出力 |
+| 描画 | Canvas API | ブラウザ標準 | プレビューの描画。図全体がキャンバスに収まるよう自動で縮尺を調整 |
+| PDF生成 | [pdf-lib](https://pdf-lib.js.org/) | 1.17 | A4縦（595×842pt）のPDFを生成。1mm = 72/25.4pt で換算し、実寸で出力 |
+| スタイル | 素のCSS | - | `src/index.css` のみ。CSSフレームワークは使っていません |
+| 静的解析 | ESLint + typescript-eslint | 8.57 / 8.x | `npm run lint`（警告0件を維持） |
+| ホスティング | [Cloudflare Pages](https://pages.cloudflare.com/) | - | GitHub連携で、`main` へのpushごとに自動でビルド・デプロイ |
+
+### 構成の特徴
+
+- **完全にブラウザ内で完結**：サーバー、API、データベース、ログインはありません。入力した値や生成したPDFが外部に送信されることはありません
+- **実行時の依存は最小限**：本番バンドルに含まれるのは React と pdf-lib だけです
+- **静的ファイルとして配信**：`npm run build` で出力される `dist/` を置くだけで、どの静的ホスティングでも動きます
+
+### 動作環境
+
+- **Node.js**：22系を推奨（Cloudflare Pages のビルドも `NODE_VERSION=22` で実行）
+- **ブラウザ**：Canvas API と ES2020 に対応したモダンブラウザ（Chrome / Edge / Safari / Firefox の最新版）
 
 ## 🚀 ローカル開発
 
@@ -37,17 +53,20 @@
 # 依存関係のインストール
 npm install
 
-# 開発サーバー起動（代替手段）
-python3 -m http.server 8888 --directory dist &
-
-# ビルド
-npm run build
+# 開発サーバー起動（http://localhost:5173）
+npm run dev
 
 # 型チェック
 npm run type-check
 
 # Lint
 npm run lint
+
+# 本番ビルド（dist/ に出力）
+npm run build
+
+# ビルド結果の確認
+npm run preview
 ```
 
 ## 📁 プロジェクト構造
