@@ -4,7 +4,7 @@
 
 ## 🌐 Demo
 
-[Live Demo](https://radial-circle-pdf.vercel.app/) 🚀
+[Live Demo](https://radial-circle-pdf.pages.dev/) 🚀
 
 ## ✨ 機能
 
@@ -29,7 +29,7 @@
 - **Build Tool**: Vite
 - **Drawing**: Canvas API
 - **PDF**: PDF-lib
-- **Deployment**: Vercel
+- **Deployment**: Cloudflare Pages（GitHub連携、mainへのpushで自動デプロイ）
 
 ## 🚀 ローカル開発
 

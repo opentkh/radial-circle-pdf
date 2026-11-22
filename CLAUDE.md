@@ -113,5 +113,5 @@ src/
 - **ビルドシステム**: 安定
 - **サーバー**: 静的ファイルサーバーで動作
 - **認証**: 不要（削除済み）
-- **デプロイ**: 静的ホスティング可能
+- **デプロイ**: Cloudflare Pages（https://radial-circle-pdf.pages.dev/）。GitHub連携でmainへのpushが自動デプロイ。ビルド: `npm run build` → `dist`、NODE_VERSION=22（2026-11-22にVercelから移行）
 - **レスポンシブ**: モバイル対応完了
